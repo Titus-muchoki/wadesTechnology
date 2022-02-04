@@ -32,4 +32,6 @@ class ProfileForm(forms.ModelForm):
     email = forms.CharField(max_length=30)
 
     class Meta:
+        dp = ImageField()
         model = Profile
+        fields = ['firstName', 'lastName', 'email', 'bio']
