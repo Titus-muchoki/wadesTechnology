@@ -33,4 +33,16 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 def profile(request):
-    return render(request, "profile.html",{})
+    return render(request, "profile.html", {})
+
+def search_results(request):
+    if 'size' in request.GET or request.GET['size']:
+        search_item = request.GET.get('size')
+        searched_items = Catalogue.objects.filter(size=search_item)
+        print(searched_items)
+        message = f"{search_item}"
+        return render(request, 'search.html',{"message":message,
+            "searched_items": searched_items})
+    else:
+        message = "You haven't searched for any item"
+        return render(request, 'search.html', {"message":message})
