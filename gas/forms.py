@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from pyuploadcare.dj.forms import ImageField
-from .models import Catalogue
+from .models import Catalogue, Profile
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30)
@@ -25,3 +25,11 @@ class CatalogueForm(forms.ModelForm):
         model = Catalogue
         exclude = ["dateAdded"]
         fields = ['image','price','size','weight','name', 'availability']
+
+class ProfileForm(forms.ModelForm):
+    firstName = forms.CharField(max_length=30)
+    lastName = forms.CharField(max_length=30)
+    email = forms.CharField(max_length=30)
+
+    class Meta:
+        model = Profile

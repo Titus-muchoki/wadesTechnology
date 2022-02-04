@@ -22,7 +22,7 @@ def signup(request):
             username = form.cleaned_data.get('username')
             email = form.cleaned_data.get('email')
             raw_password = form.cleaned_data.get('password1')
-            user = authenticate(username=username,email=email, password=raw_password)
+            user = authenticate(username=username, email=email, password=raw_password)
             profile = Profile(user=user)
             profile.save()
             user.is_active = True
@@ -31,3 +31,6 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+def profile(request):
+    return render(request, "profile.html",{})
