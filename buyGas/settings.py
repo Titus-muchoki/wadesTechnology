@@ -80,9 +80,9 @@ WSGI_APPLICATION = 'buyGas.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': "gas",
-        'USER': "dk",
-        'PASSWORD': "sibhon"
+        'NAME': config('NAME'),
+        'USER': config('dk'),
+        'PASSWORD': config('sibhon')
     }
 }
 
