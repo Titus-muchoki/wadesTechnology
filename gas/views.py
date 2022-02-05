@@ -1,8 +1,15 @@
 from django.shortcuts import render,redirect
+from gas.mpesa import LipanaMpesaPpassword
 from .forms import SignUpForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Profile, Catalogue
+from requests.auth import HTTPBasicAuth
+from .models import Profile, Catalogue, Transactions, Orders
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponse
+from django.contrib.sites.shortcuts import get_current_site
+import json
+import requests
 
 
 # Create your views here.
@@ -46,3 +53,114 @@ def search_results(request):
     else:
         message = "You haven't searched for any item"
         return render(request, 'search.html', {"message":message})
+
+
+def getAccessToken():
+    consumer_key = 'YR6ZT25vHEXOhwBpjOaXOemjE88PGGQp'
+    consumer_secret = 'kwMf8UX2hAgEljk5'
+    api_URL = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    r = requests.get(api_URL, auth=HTTPBasicAuth(consumer_key, consumer_secret))
+    mpesa_access_token = json.loads(r.text)
+    validated_mpesa_access_token = mpesa_access_token['access_token']
+    print(mpesa_access_token)
+    return validated_mpesa_access_token
+
+def sanitiseNumber(phone):
+    string_number = str(phone)
+    if string_number.startswith("7"):
+        string_number="254"+string_number
+        return int(string_number)
+    elif string_number.startswith("07"):
+        string_number.replace("07", "254")
+        return int(string_number)
+    elif string_number.startswith("01"):
+        string_number.replace("01", "254")
+        return int(string_number)
+    return phone
+
+def lipa_na_mpesa_online(request, pk):
+    print("{}/confirmation/".format(get_current_site(request)))
+    gas = Catalogue.objects.get(id=pk)
+    access_token = getAccessToken()
+    print(sanitiseNumber(request.user.profile.phone_number))
+    api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+    headers = {"Authorization": "Bearer %s" % access_token}
+    stkPushrequest = {
+        "BusinessShortCode": LipanaMpesaPpassword.Business_short_code,
+        "Password": LipanaMpesaPpassword.decode_password,
+        "Timestamp": LipanaMpesaPpassword.lipa_time,
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": gas.price,
+        "PartyA": sanitiseNumber(request.user.profile.phone_number),  # replace with your phone number to get stk push
+        "PartyB": LipanaMpesaPpassword.Business_short_code, #587568
+        "PhoneNumber": sanitiseNumber(request.user.profile.phone_number),  # replace with your phone number to get stk push
+        # "CallBackURL": "{}/confirmation/".format(get_current_site(request)),
+        "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+        "AccountReference": str(request.user.username),
+        "TransactionDesc": "Testing stk push"
+    }
+    response = requests.post(api_url, json=stkPushrequest, headers=headers)
+    print("statuscode: " + str(response.status_code))
+    if response.status_code==200:
+        data = response.json()
+        if 'ResponseCode' in data.keys():
+            if data["ResponseCode"] == "0":
+                print(data["ResponseCode"])
+                merchant_id = data['MerchantRequestID']
+                transaction = Transactions(
+                    amount = gas.price,
+                    phoneNumber = sanitiseNumber(request.user.profile.phone_number),
+                    checkoutReuestID = data['CheckoutRequestID'],
+                    merchantRequestId = merchant_id,
+                    status = "Pending",
+                    user = request.user
+                )
+                transaction.save()
+                order = Orders(
+                    user = request.user,
+                    catalogue = gas,
+                    transaction = transaction
+                )
+                order.save()
+        pass
+    print(response.json())
+    return redirect("/")
+
+@csrf_exempt
+def validation(request):
+    context = {
+        "ResultCode": 0,
+        "ResultDesc": "Accepted"
+    }
+    return JsonResponse(dict(context))
+
+@csrf_exempt
+def confirmation(request):
+    print("called")
+    mpesa_body =request.body.decode('utf-8')
+    print(mpesa_body)
+    try:
+        mpesa_payment = json.loads(mpesa_body)
+        print(mpesa_payment)
+    except Exception as e:
+        print(e)
+        context = {
+            "ResultCode": 1,
+            "ResultDesc": "Accepted"
+        }
+        return JsonResponse(dict(context))
+    # print(mpesa_payment['Body']['stkCallback']['CallbackMetadata']['Item'][0]['Value'])
+    if mpesa_payment['Body']['stkCallback']['ResultCode'] == 0:
+        print(request.user)
+        transaction = Transactions.objects.get(
+            checkoutReuestID = mpesa_payment['Body']['stkCallback']['CheckoutRequestID'])
+        if transaction.amount == mpesa_payment['Body']['stkCallback']['CallbackMetadata']['Item'][0]['Value']:
+            transaction.receipt = mpesa_payment['Body']['stkCallback']['CallbackMetadata']['Item'][1]['Value']
+            order = transaction.order
+            order.isPaid = True
+            transaction.save()
+            order.save()
+        return redirect("/")
+    transaction = Transactions(status=mpesa_payment['Body']['stkCallback']['ResultDesc'])
+    print("failed")
+    return redirect("/")
