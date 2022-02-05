@@ -1,5 +1,6 @@
+from decouple import config
 from django.shortcuts import render,redirect
-from gas.mpesa import LipanaMpesaPpassword
+from gas.mpesa import LipanaMpesaPpassword, MpesaC2bCredential
 from .forms import SignUpForm
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
@@ -56,9 +57,9 @@ def search_results(request):
 
 
 def getAccessToken():
-    consumer_key = 'YR6ZT25vHEXOhwBpjOaXOemjE88PGGQp'
-    consumer_secret = 'kwMf8UX2hAgEljk5'
-    api_URL = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
+    consumer_key = MpesaC2bCredential.consumer_key
+    consumer_secret = MpesaC2bCredential.consumer_secret
+    api_URL = MpesaC2bCredential.api_URL
     r = requests.get(api_URL, auth=HTTPBasicAuth(consumer_key, consumer_secret))
     mpesa_access_token = json.loads(r.text)
     validated_mpesa_access_token = mpesa_access_token['access_token']
@@ -92,7 +93,7 @@ def lipa_na_mpesa_online(request, pk):
         "TransactionType": "CustomerPayBillOnline",
         "Amount": gas.price,
         "PartyA": sanitiseNumber(request.user.profile.phone_number),  # replace with your phone number to get stk push
-        "PartyB": LipanaMpesaPpassword.Business_short_code, #587568
+        "PartyB": LipanaMpesaPpassword.Business_short_code,
         "PhoneNumber": sanitiseNumber(request.user.profile.phone_number),  # replace with your phone number to get stk push
         # "CallBackURL": "{}/confirmation/".format(get_current_site(request)),
         "CallBackURL": "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
