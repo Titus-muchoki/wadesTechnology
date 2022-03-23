@@ -1,26 +1,31 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from pyuploadcare.dj.forms import ImageField
 from .models import Catalogue, Profile
 
-class SignUpForm(UserCreationForm):
-    first_name = forms.CharField(max_length=30)
-    last_name = forms.CharField(max_length=30)
-    email = forms.EmailField(max_length=254)
 
-    def __init__(self, *args, **kwargs):
-        super(SignUpForm, self).__init__(*args, **kwargs)
-
-        for fieldname in ['username', 'password1', 'password2']:
-            self.fields[fieldname].help_text = None
+class UserRegistration(forms.ModelForm):
+    password = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(
+        label='Repeat Password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name','username', 'email', 'password1', 'password2']
+        fields = ('username', 'first_name', 'last_name', 'email')
 
-class CatalogueForm(forms.ModelForm):
-    image = ImageField()
+        def clean_password2(self):
+            cd = self.cleaned_data
+            if cd['password'] != cd['password2']:
+                raise forms.ValidationError('Passwords don\'t match.')
+            return cd['password2']
+
+
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class CatalogueForm(forms.ModelForm):    
     class Meta:
         model = Catalogue
         exclude = ["dateAdded"]
@@ -32,6 +37,6 @@ class ProfileForm(forms.ModelForm):
     email = forms.CharField(max_length=30)
 
     class Meta:
-        dp = ImageField()
+        # dp = ImageField()
         model = Profile
         fields = ['firstName', 'lastName', 'email', 'bio']

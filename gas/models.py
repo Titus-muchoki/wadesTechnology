@@ -1,16 +1,20 @@
+from distutils.command.upload import upload
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 import datetime as dt
-from pyuploadcare.dj.models import ImageField
-from tinymce.models import HTMLField
 from datetime import datetime
 # Create your models here.
 
 
+class UserRegistrationModel(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
-    dp = ImageField(blank=True, manual_crop="")
-    bio = HTMLField(max_length=500)
+    # dp = Ime(blank=True, manual_crop="")
+    bio = models.TextField(max_length=500)
     email_confirmed = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=15)
 
@@ -31,7 +35,7 @@ class Catalogue(models.Model):
         ("MEDIUM", 'Medium'),
         ("SMALL", 'Small')
     ]
-    image = ImageField(blank=True, manual_crop="")
+    image = models.ImageField(upload_to="images/")
     price = models.IntegerField()
     size = models.CharField(choices=SIZES, max_length=6)
     weight = models.IntegerField()
@@ -42,6 +46,11 @@ class Catalogue(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def get_single_product(cls, pk):
+        product = cls.objects.get(pk=pk)
+        return product
 
 class Transactions(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transactions')

@@ -34,7 +34,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "gas",
-    "bootstrap4",
+    'bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -79,13 +79,10 @@ WSGI_APPLICATION = 'buyGas.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('NAME'),
-        'USER': config('USER'),
-        'PASSWORD': config('PASSWORD')
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -139,9 +136,10 @@ STATICFILES_DIRS = [
 ]
 ###########
 
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'authapp:dashboard'
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
 
-UPLOADCARE = {
-    'pub_key':config('pub_key'),
-    'secret': config('secret'),
-}
+
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = str(BASE_DIR.joinpath('sent_emails'))
