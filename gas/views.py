@@ -62,13 +62,18 @@ def single_product(request, pk):
 
 def addToCart(request, pk):
     cat = Catalogue.objects.get(pk = pk)
-    itemInCart = Cart.objects.get(user = request.user, catalogue = cat)
-    if itemInCart is not None:
-        itemInCart.quantity += 1
-        itemInCart.save()
-    else:
+    try:
+        itemInCart = Cart.objects.get(user = request.user, catalogue = cat)
+        if itemInCart is not None:
+            itemInCart.quantity += 1
+            itemInCart.save()
+        else:
+            cartItem = Cart(user = request.user, catalogue = cat)
+            cartItem.save()
+    except:
         cartItem = Cart(user = request.user, catalogue = cat)
         cartItem.save()
+
     return redirect("/cart")
 
 
