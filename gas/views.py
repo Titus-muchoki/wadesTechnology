@@ -8,31 +8,26 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegistration, UserEditForm
+from .forms import UserEditForm
 import json
 import requests
+from django.contrib.auth.forms import UserCreationForm
 
 
 # Create your views here.
 def register(request):
     if request.method == 'POST':
-        form = UserRegistration(request.POST or None)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
-            new_user = form.save(commit=False)
-            new_user.set_password(
-                form.cleaned_data.get('password')
-            )
-            new_user.save()
-            return render(request, 'authapp/register_done.html')
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username = username, password = password)
+            login(request, user)
+            return redirect('/')
     else:
-        form = UserRegistration()
-
-    context = {
-        "form": form
-    }
-
-    return render(request, 'authapp/register.html', context=context)
-
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
 
 @login_required
 def edit(request):
@@ -57,7 +52,11 @@ def index(request):
 
 def single_product(request, pk):
     product = Catalogue.get_single_product(pk)
-    return render(request, "product.html", {"product": product})
+    available = product.availability
+    return render(request, "product.html", {"product": product, "available": available})
+
+def cart_items(request):
+    return render(request, "cart-items.html")
 
 def profile(request):
     return render(request, "profile.html", {})

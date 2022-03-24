@@ -136,9 +136,9 @@ STATICFILES_DIRS = [
 ]
 ###########
 
-LOGIN_REDIRECT_URL = 'authapp:dashboard'
-LOGIN_URL = 'login'
-LOGOUT_URL = 'logout'
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
 
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
