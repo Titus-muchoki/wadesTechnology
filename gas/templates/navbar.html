@@ -1,20 +1,20 @@
 <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
     <div class="container">
-  
+
       <!-- Brand -->
       <a class="navbar-brand waves-effect" href="/">
         <strong class="blue-text">Shahwah Gas Agency</strong>
       </a>
-  
+
       <!-- Collapse -->
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-  
+
       <!-- Links -->
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-  
+
         <!-- Left -->
         <ul class="navbar-nav mr-auto">
           {% comment %} <li class="nav-item active">
@@ -27,12 +27,12 @@
               Checkout</a>
           </li> {% endcomment %}
         </ul>
-  
-        <!-- Right -->        
-        <ul class="navbar-nav nav-flex-icons">             
-        {% if request.user.is_authenticated %}        
+
+        <!-- Right -->
+        <ul class="navbar-nav nav-flex-icons">
+        {% if request.user.is_authenticated %}
           <li class="nav-item">
-            <a href="" class="nav-link waves-effect">
+            <a href="/cart" class="nav-link waves-effect">
               <span class="badge red z-depth-1 mr-1">  </span>
               <i class="fas fa-shopping-cart"></i>
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>
@@ -42,7 +42,7 @@
             <a class="nav-link waves-effect" href="/logout">
               <span class="clearfix d-none d-sm-inline-block"> Logout </span>
             </a>
-          </li>          
+          </li>
           {% else %}
           <li class="nav-item">
             <a class="nav-link waves-effect" href="/login">
@@ -53,10 +53,10 @@
             <a class="nav-link waves-effect" href="/register">
               <span class="clearfix d-none d-sm-inline-block"> Signup </span>
             </a>
-          </li>              
-          {% endif %}      
-        </ul>        
+          </li>
+          {% endif %}
+        </ul>
       </div>
-  
+
     </div>
   </nav>

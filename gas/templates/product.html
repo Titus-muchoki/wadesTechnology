@@ -29,8 +29,8 @@
           </div>
 
           <p class="lead font-weight-bold">Amount</p>
-          <p class="lead">                       
-            <span>Ksh {{ product.price }}</span>          
+          <p class="lead">
+            <span>Ksh {{ product.price }}</span>
           </p>
 
           <p class="lead font-weight-bold">Weight</p>
@@ -43,12 +43,12 @@
           {% else %}
           <p>Not Available</p>
           {% endif %}
-         
-          <a href="/cart" class="btn btn-primary btn-md my-0 p">
+
+          <a href="/addToCart/{{product.id}}" class="btn btn-primary btn-md my-0 p">
             Add to cart
             <i class="fas fa-shopping-cart ml-1"></i>
           </a>
-          <a href="{{ product.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">
+          <a href="/removeFromCart/{{product.id}}" class="btn btn-danger btn-md my-0 p">
             Remove from cart
           </a>
 
@@ -61,7 +61,7 @@
     </div>
     <!--Grid row-->
 
-    <hr>  
+    <hr>
 
   </div>
 </main>

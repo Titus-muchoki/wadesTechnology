@@ -4,10 +4,10 @@
 
 {% block content %}
 <section>
-  <div class="container mt-5">  
+  <div class="container mt-5">
     <div class="row mt-5">
       <div class="col-md-6 offset-md-3 mt-5">
-        <form method="post" action="/register/">
+        <form method="POST" action="/register/">
           {% csrf_token %} {% for field in form %}
           <div class="form-group">
             {{ field.label_tag }}

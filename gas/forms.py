@@ -5,13 +5,14 @@ from .models import Catalogue, Profile
 
 
 class UserRegistration(forms.ModelForm):
+    phoneNumber = forms.CharField(label='PhoneNumber', widget=forms.PasswordInput)
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(
         label='Repeat Password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email')
+        fields = ('username', 'first_name', 'last_name', 'email', 'phoneNumber')
 
         def clean_password2(self):
             cd = self.cleaned_data
@@ -25,7 +26,7 @@ class UserEditForm(forms.ModelForm):
         model = User
         fields = ('first_name', 'last_name', 'email')
 
-class CatalogueForm(forms.ModelForm):    
+class CatalogueForm(forms.ModelForm):
     class Meta:
         model = Catalogue
         exclude = ["dateAdded"]

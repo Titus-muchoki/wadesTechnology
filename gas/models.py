@@ -1,4 +1,5 @@
 from distutils.command.upload import upload
+from this import d
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
@@ -12,6 +13,7 @@ class UserRegistrationModel(models.Model):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class Profile(models.Model):
+    phone_number = models.CharField(max_length=15)
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
     # dp = Ime(blank=True, manual_crop="")
     bio = models.TextField(max_length=500)
@@ -66,6 +68,15 @@ class Transactions(models.Model):
     def __str__(self):
         return self.status
 
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='cartItems')
+    catalogue = models.ForeignKey(Catalogue, on_delete=models.CASCADE, related_name='cartItems')
+    quantity = models.IntegerField(default=1)
+
+
+    def __str__(self):
+        return self.catalogue
+
 
 class Orders(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
@@ -75,4 +86,4 @@ class Orders(models.Model):
     isDelivered = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.status
+        return self.catalogue

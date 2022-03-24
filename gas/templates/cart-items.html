@@ -6,17 +6,33 @@
         <div class="col-md-12 mb-4 mt-5">
             <h4 class="d-flex justify-content-between align-items-center mb-3">
                 <span class="text-muted">Your cart</span>
-                <span class="badge badge-secondary badge-pill">{{ order.items.count }}</span>
+                <span class="badge badge-secondary badge-pill">{{ cartItems.count }}</span>
             </h4>
-            <ul class="list-group mb-3 z-depth-1">        
+            {% for cartItem in cartItems %}
+            <ul class="list-group mb-3 z-depth-1">
                 <li class="list-group-item d-flex justify-content-between lh-condensed">
                     <div>
-                        <h6 class="my-0">quantity</h6>
-                        <small class="text-muted">decription}</small>
+                        <small class="text-muted">
+                            <img src="{{ cartItem.catalogue.image.url }}"
+                                class="img-fluid" alt="" width="50" height="50">
+                        </small>
+                        <small class="text-muted">{{cartItem.catalogue.name}}</small>
+                        <small class="text-muted">{{cartItem.quantity}}</small>
                     </div>
-                    <span class="text-muted">Ksh 4452</span>
-                </li>        
-        
+                    <span class="text-muted">Ksh {{cartItem.catalogue.price}}</span>
+                </li>
+            </ul>
+            {% endfor %}
+
+            <a href="/">
+                <button>CONTINUE SHOPPING</button>
+            </a>
+
+            {% if cartItems.count > 0 %}
+            <a href="/lipa_na_mpesa_online">
+                <button>CHECKOUT</button>
+            </a>
+            {% endif %}
         </div>
     </div>
 </div>
