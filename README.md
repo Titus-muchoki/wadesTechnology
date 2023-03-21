@@ -18,7 +18,7 @@ To get the code..
 
 3. Running the application
   ```bash
-  python3.9 manage.py runserver
+  python3 manage.py runserver
   ```
 Open the application on your browser `127.0.0.1:8000`.
 
