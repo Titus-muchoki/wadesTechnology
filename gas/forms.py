@@ -4,15 +4,14 @@ from django.contrib.auth.models import User
 from .models import Catalogue, Profile
 
 
-class UserRegistration(forms.ModelForm):
-    phoneNumber = forms.CharField(label='PhoneNumber', widget=forms.PasswordInput)
+class UserRegistration(forms.ModelForm):    
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(
         label='Repeat Password', widget=forms.PasswordInput)
 
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'phoneNumber')
+        fields = ('username', )
 
         def clean_password2(self):
             cd = self.cleaned_data
@@ -30,7 +29,7 @@ class CatalogueForm(forms.ModelForm):
     class Meta:
         model = Catalogue
         exclude = ["dateAdded"]
-        fields = ['image','price','size','weight','name', 'availability']
+        fields = ['image','price','name', 'availability']
 
 class ProfileForm(forms.ModelForm):
     firstName = forms.CharField(max_length=30)

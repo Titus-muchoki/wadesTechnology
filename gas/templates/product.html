@@ -31,11 +31,7 @@
           <p class="lead font-weight-bold">Amount</p>
           <p class="lead">
             <span>Ksh {{ product.price }}</span>
-          </p>
-
-          <p class="lead font-weight-bold">Weight</p>
-
-          <p>{{ product.weight }} Kgs</p>
+          </p>          
 
           {% if available == True %}
           <p class="lead font-weight-bold">Availability</p>
@@ -48,9 +44,7 @@
             Add to cart
             <i class="fas fa-shopping-cart ml-1"></i>
           </a>
-          <a href="/removeFromCart/{{product.id}}" class="btn btn-danger btn-md my-0 p">
-            Remove from cart
-          </a>
+         
 
         </div>
         <!--Content-->

@@ -17,8 +17,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name='profile')
     # dp = Ime(blank=True, manual_crop="")
     bio = models.TextField(max_length=500)
-    email_confirmed = models.BooleanField(default=False)
-    phone_number = models.CharField(max_length=15)
+    email_confirmed = models.BooleanField(default=False)    
 
 
     def save_profile(self):
@@ -32,16 +31,18 @@ class Profile(models.Model):
 
 
 class Catalogue(models.Model):
-    SIZES = [
-        ("LARGE", 'Large'),
-        ("MEDIUM", 'Medium'),
-        ("SMALL", 'Small')
-    ]
+    categories = (
+        ('Phone', 'Phone'),
+        ('Tablet', 'Tablet'),
+        ('Laptop', 'Laptop'),
+        ('Television', 'Television'),
+        ('Printer', 'Printer'),
+        ('Desktop', 'Desktop'),
+        ('Watch', 'Watch'),
+    )
     image = models.ImageField(upload_to="images/")
     price = models.IntegerField()
-    size = models.CharField(choices=SIZES, max_length=6)
-    weight = models.IntegerField()
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=30)            
     availability = models.BooleanField(default=False)
     dateAdded = models.DateField(default=datetime.utcnow)
 
