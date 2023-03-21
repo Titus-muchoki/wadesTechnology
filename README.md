@@ -12,7 +12,7 @@ To get the code..
 2. Open to kicks folder and install requirements
   ```bash  
   python3 -m venv virtual
-  source virtual/bin/activate
+  source virtual/bin/activate or .\virtual\Scripts\Activate.ps1
   pip install -r requirements.txt
   ```
 
