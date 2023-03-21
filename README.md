@@ -18,6 +18,8 @@ To get the code..
 
 3. Running the application
   ```bash
+  python3 manage.py makemigrations gas
+  python3 manage.py migrate
   python3 manage.py runserver
   ```
 Open the application on your browser `127.0.0.1:8000`.
